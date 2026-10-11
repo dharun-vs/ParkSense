@@ -126,6 +126,11 @@ test.describe('Parking Status Colors & Autonomous Verification', () => {
       { name: 'Mobile', width: 390, height: 844 },
     ]
 
+    // Sign in as customer to access protected parking page
+    await page.getByRole('button', { name: /Customer/i }).click()
+    await page.getByRole('button', { name: 'Sign In', exact: true }).click()
+    await page.waitForURL('**/dashboard**')
+
     for (const vp of viewports) {
       await page.setViewportSize({ width: vp.width, height: vp.height })
       await page.goto('/parking')

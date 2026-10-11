@@ -63,12 +63,15 @@ test.describe('Accessibility, Keyboard Navigation & Error Monitoring', () => {
       }
     })
 
-    // Visit public and protected pages
+    // Authenticate as customer to access protected pages
+    await page.goto('/login')
+    await page.getByRole('button', { name: /Customer/i }).click()
+    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.waitForURL('**/dashboard')
+
+    // Visit protected parking page
     await page.goto('/parking')
     await expect(page.getByRole('heading', { name: 'Campus Parking' })).toBeVisible()
-
-    await page.goto('/login')
-    await expect(page.getByText('Welcome to ParkSense')).toBeVisible()
 
     expect(pageErrors).toEqual([])
     expect(severeConsoleErrors).toEqual([])

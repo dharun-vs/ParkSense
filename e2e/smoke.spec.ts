@@ -16,8 +16,9 @@ test.describe('ParkSense End-to-End Smoke Tests', () => {
       }
     })
 
-    // Navigate to Login page
-    await page.goto('/login')
+    // Navigate to Root URL / — must display Login immediately
+    await page.goto('/')
+    await page.waitForURL('**/login')
 
     // Wait for main brand header to be visible
     await expect(page.getByText('Welcome to ParkSense')).toBeVisible()
@@ -64,11 +65,17 @@ test.describe('ParkSense End-to-End Smoke Tests', () => {
     expect(pageErrors).toEqual([])
   })
 
-  test('parking layout renders floor plans and bay selectors seamlessly', async ({ page }) => {
+  test('parking layout renders floor plans and bay selectors seamlessly for authenticated customer', async ({ page }) => {
     const pageErrors: Error[] = []
     page.on('pageerror', (err) => pageErrors.push(err))
 
-    // Direct visit to parking browser page
+    // Authenticate as customer
+    await page.goto('/login')
+    await page.getByRole('button', { name: /Customer/i }).click()
+    await page.getByRole('button', { name: /Sign In/i }).click()
+    await page.waitForURL('**/dashboard')
+
+    // Navigate to parking browser page
     await page.goto('/parking')
 
     // Check facility floor indicators

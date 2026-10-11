@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider, useAuth } from '@/features/auth/AuthContext'
 import { LoginPage } from '@/pages/LoginPage'
-import { ProtectedRoute, AdminRoute } from '@/app/router'
+import { ProtectedRoute, AdminRoute, RootRedirect } from '@/app/router'
 import { demoStore } from '@/lib/demoStore'
 
 function renderWithApp(initialEntries = ['/login']) {
@@ -12,8 +12,17 @@ function renderWithApp(initialEntries = ['/login']) {
     <AuthProvider>
       <MemoryRouter initialEntries={initialEntries}>
         <Routes>
+          <Route path="/" element={<RootRedirect />} />
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
+            <Route
+              path="/parking"
+              element={
+                <div>
+                  <h1 data-testid="parking-heading">Parking Map</h1>
+                </div>
+              }
+            />
             <Route
               path="/dashboard"
               element={
@@ -55,6 +64,47 @@ describe('Auth Regression: Login Redirect Loop & Session Lifecycle', () => {
     localStorage.clear()
     demoStore.resetDemoData()
     demoStore.logoutDemo()
+  })
+
+  it('unauthenticated users opening root URL / are redirected to /login immediately', async () => {
+    renderWithApp(['/'])
+
+    await waitFor(() => {
+      expect(screen.getByText(/Welcome to ParkSense/i)).toBeInTheDocument()
+      expect(screen.queryByTestId('dashboard-heading')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('parking-heading')).not.toBeInTheDocument()
+    })
+  })
+
+  it('unauthenticated users cannot access /parking and are redirected to /login', async () => {
+    renderWithApp(['/parking'])
+
+    await waitFor(() => {
+      expect(screen.getByText(/Welcome to ParkSense/i)).toBeInTheDocument()
+      expect(screen.queryByTestId('parking-heading')).not.toBeInTheDocument()
+    })
+  })
+
+  it('unauthenticated users accessing /parking redirect to /login and return to /parking post-login', async () => {
+    const user = userEvent.setup()
+    renderWithApp(['/parking'])
+
+    await waitFor(() => {
+      expect(screen.getByText(/Welcome to ParkSense/i)).toBeInTheDocument()
+    })
+
+    // Fill customer demo credentials
+    const customerCard = screen.getByRole('button', { name: /customer/i })
+    await user.click(customerCard)
+
+    // Submit sign in
+    const signInBtn = screen.getByRole('button', { name: /sign in/i })
+    await user.click(signInBtn)
+
+    // Should redirect to original target (/parking)
+    await waitFor(() => {
+      expect(screen.getByTestId('parking-heading')).toBeInTheDocument()
+    })
   })
 
   it('unauthenticated users cannot access /dashboard and are redirected to /login', async () => {

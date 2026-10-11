@@ -53,14 +53,14 @@ export const AdminRoute: React.FC = () => {
   return <Outlet />
 }
 
-// Root redirect
+// Root redirect: default entry point is Login for logged-out visitors
 export const RootRedirect: React.FC = () => {
   const { user, isAdmin, isLoading } = useAuth()
   if (isLoading) return <PageLoading message="Initializing ParkSense…" />
   if (user) {
     return <Navigate to={isAdmin ? '/admin' : '/dashboard'} replace />
   }
-  return <Navigate to="/parking" replace />
+  return <Navigate to="/login" replace />
 }
 
 export const router = createBrowserRouter([
@@ -79,15 +79,14 @@ export const router = createBrowserRouter([
   {
     element: <AppLayout />,
     children: [
-      // Public / guest accessible parking browse
-      {
-        path: '/parking',
-        element: <ParkingPage />,
-      },
       // Authenticated User Routes
       {
         element: <ProtectedRoute />,
         children: [
+          {
+            path: '/parking',
+            element: <ParkingPage />,
+          },
           {
             path: '/dashboard',
             element: <DashboardPage />,

@@ -98,6 +98,21 @@ test.describe('Authentication & Session Lifecycle', () => {
     await page.waitForURL('**/login**')
     await expect(page.getByText('Welcome to ParkSense')).toBeVisible()
 
+    // Root URL / should redirect directly to /login
+    await page.goto('/')
+    await page.waitForURL('**/login**')
+    await expect(page.getByText('Welcome to ParkSense')).toBeVisible()
+
+    // Direct navigation to /parking should redirect to /login
+    await page.goto('/parking')
+    await page.waitForURL('**/login**')
+    await expect(page.getByText('Welcome to ParkSense')).toBeVisible()
+
+    // Browser back navigation should not grant access to protected routes
+    await page.goBack()
+    await page.waitForURL('**/login**')
+    await expect(page.getByText('Welcome to ParkSense')).toBeVisible()
+
     expect(pageErrors).toEqual([])
   })
 

@@ -186,33 +186,43 @@ export const LoginPage: React.FC = () => {
             </Button>
           </form>
 
-          {/* Divider matching reference design */}
+          {/* Divider */}
           <div className="relative flex py-1 items-center">
             <div className="flex-grow border-t border-slate-200" />
             <span className="flex-shrink mx-3 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-              OR
+              COLLEGE DEMO ACCESS
             </span>
             <div className="flex-grow border-t border-slate-200" />
           </div>
+
+          <p className="text-[11px] text-[#66758A] text-center">
+            Pre-configured evaluation accounts. Click to load demo credentials:
+          </p>
 
           {/* Reference Demo Quick-Access Buttons */}
           <div className="space-y-2.5">
             <button
               type="button"
               onClick={() => fillDemoCredentials('customer')}
-              className="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-[#0B1B3D] flex items-center justify-center gap-2 hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer shadow-2xs"
+              className="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-[#0B1B3D] flex items-center justify-between hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer shadow-2xs"
             >
-              <UserCheck className="w-4 h-4 text-[#10B981]" />
-              <span>Customer Demo Account</span>
+              <div className="flex items-center gap-2">
+                <UserCheck className="w-4 h-4 text-[#10B981]" />
+                <span>Customer Demo Account</span>
+              </div>
+              <span className="text-[11px] font-mono text-slate-400 font-normal">customer / 1234</span>
             </button>
 
             <button
               type="button"
               onClick={() => fillDemoCredentials('admin')}
-              className="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-[#0B1B3D] flex items-center justify-center gap-2 hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer shadow-2xs"
+              className="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-[#0B1B3D] flex items-center justify-between hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer shadow-2xs"
             >
-              <Shield className="w-4 h-4 text-[#0B1B3D]" />
-              <span>Admin Demo Account</span>
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-[#0B1B3D]" />
+                <span>Admin Demo Account</span>
+              </div>
+              <span className="text-[11px] font-mono text-slate-400 font-normal">admin / admin</span>
             </button>
           </div>
 
